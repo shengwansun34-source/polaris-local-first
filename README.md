@@ -20,6 +20,13 @@ The core design idea is to build an environment that matches how an AI collabora
 
 *Project work keeps its conversations, files, reference material, and runnable entry points together.*
 
+<p align="center">
+  <img src="docs/assets/screenshots/polaris-mobile-dark-chat.png" alt="A Polaris conversation on a phone in dark appearance" width="42%" />
+  <img src="docs/assets/screenshots/polaris-mobile-dark-workspace.png" alt="A Polaris project workspace on a phone in dark appearance" width="42%" />
+</p>
+
+<p align="center"><em>The conversation and workspace surfaces remain available at phone size with dark appearance.</em></p>
+
 ## Product Shape
 
 - **Chat workspace:** long-lived conversations, streaming replies, task state, tool calls, thinking summaries, attachments, and import/export flows.

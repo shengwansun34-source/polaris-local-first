@@ -29,24 +29,42 @@ try {
   await mkdir(outputDir, { recursive: true });
   await waitForServer();
 
-  const context = await browser.newContext({
+  const desktopContext = await browser.newContext({
     viewport: { width: 1600, height: 900 },
     deviceScaleFactor: 1,
     colorScheme: 'light',
     reducedMotion: 'reduce'
   });
-  const page = await context.newPage();
+  const desktopPage = await desktopContext.newPage();
 
-  await page.goto(`${baseUrl}/?debugQa=1`, { waitUntil: 'domcontentloaded' });
-  await page.waitForSelector('.app-shell', { timeout: 20_000 });
-  await page.waitForFunction(() => Boolean(window.__polarisDev), undefined, { timeout: 20_000 });
-  await seedPublicShowcase(page);
+  await desktopPage.goto(`${baseUrl}/?debugQa=1`, { waitUntil: 'domcontentloaded' });
+  await desktopPage.waitForSelector('.app-shell', { timeout: 20_000 });
+  await desktopPage.waitForFunction(() => Boolean(window.__polarisDev), undefined, { timeout: 20_000 });
+  await seedPublicShowcase(desktopPage);
 
-  await captureChat(page);
-  await captureCards(page);
-  await captureWorkspace(page);
+  await captureChat(desktopPage);
+  await captureCards(desktopPage);
+  await captureWorkspace(desktopPage);
+  await desktopContext.close();
 
-  await context.close();
+  const mobileContext = await browser.newContext({
+    viewport: { width: 430, height: 932 },
+    deviceScaleFactor: 1,
+    colorScheme: 'dark',
+    reducedMotion: 'reduce'
+  });
+  const mobilePage = await mobileContext.newPage();
+
+  await mobilePage.goto(`${baseUrl}/?debugQa=1`, { waitUntil: 'domcontentloaded' });
+  await mobilePage.waitForSelector('.app-shell', { timeout: 20_000 });
+  await mobilePage.waitForFunction(() => Boolean(window.__polarisDev), undefined, { timeout: 20_000 });
+  await seedPublicShowcase(mobilePage);
+  await setDarkAppearance(mobilePage);
+
+  await captureMobileDarkChat(mobilePage);
+  await captureMobileDarkWorkspace(mobilePage);
+  await mobileContext.close();
+
   console.log(`Public screenshots written to ${outputDir}`);
 } catch (error) {
   const logTail = serverLogs.slice(-4_000);
@@ -410,6 +428,53 @@ async function captureWorkspace(page: Page) {
   await settle(page);
   await page.screenshot({
     path: `${outputDir}/polaris-project-workspace.png`,
+    type: 'png'
+  });
+}
+
+async function setDarkAppearance(page: Page) {
+  await page.evaluate(String.raw`(async () => {
+    const { useSpaceStore } = await import('/src/stores/spaceStore.ts');
+    useSpaceStore.getState().setDisplayPreferences({ appearance: 'dark' });
+  })()`);
+  await page.waitForFunction(
+    () => document.documentElement.dataset.polarisAppearance === 'dark',
+    undefined,
+    { timeout: 20_000 }
+  );
+}
+
+async function captureMobileDarkChat(page: Page) {
+  await page.evaluate(String.raw`(async () => {
+    const { useSpaceStore } = await import('/src/stores/spaceStore.ts');
+    const space = useSpaceStore.getState();
+    space.setCollectionProjectId(null);
+    space.setWorld('chat');
+  })()`);
+  await page.waitForSelector('.app-shell.chat', { timeout: 20_000 });
+  await page.locator('.chat-flow').evaluate((element) => {
+    element.scrollTop = element.scrollHeight;
+  });
+  await settle(page);
+  await page.screenshot({
+    path: `${outputDir}/polaris-mobile-dark-chat.png`,
+    type: 'png'
+  });
+}
+
+async function captureMobileDarkWorkspace(page: Page) {
+  await page.evaluate(String.raw`(async () => {
+    const { useSpaceStore } = await import('/src/stores/spaceStore.ts');
+    const space = useSpaceStore.getState();
+    space.setCollectionShelf('project');
+    space.setCollectionProjectId('showcase-knowledge-atlas');
+    space.setWorld('collection');
+  })()`);
+  await page.waitForSelector('.app-shell.collection', { timeout: 20_000 });
+  await page.waitForSelector('.room-project-fullscreen', { timeout: 20_000 });
+  await settle(page);
+  await page.screenshot({
+    path: `${outputDir}/polaris-mobile-dark-workspace.png`,
     type: 'png'
   });
 }
