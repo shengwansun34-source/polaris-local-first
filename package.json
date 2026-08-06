@@ -32,6 +32,7 @@
     "theme:validate:stable-local": "tsx tools/stable-theme-local-validation.mjs",
     "chat:qa:ui": "tsx tools/chat-ui-qa-runner.ts",
     "release:doctor": "tsx tools/polaris-release-doctor.ts",
+    "docs:screenshots": "tsx tools/capture-public-screenshots.ts",
     "publication:hygiene": "node tools/publication-hygiene-check.mjs",
     "publication:gate": "npm run publication:hygiene && npm run test:data-boundary && npm run verify",
     "source:search": "node tools/source-search.mjs",

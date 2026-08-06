@@ -308,7 +308,7 @@ export function DesktopAppSidebar({
           onClick={onOpenGroupWorld}
         >
           <Icon name="navGroup" size={18} />
-          <span>群聊</span>
+          <span>{t('app.world.group')}</span>
         </button>
         {shelfItems.map((item) => {
           const active = activeWorld === 'collection' && collectionShelf === item.shelf;
