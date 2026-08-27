@@ -11,6 +11,12 @@ import './app/bootstrap/appLayoutSurfaceBootstrap';
 import './app/bootstrap/nativeShellBootstrap';
 import './styles/tokens.css';
 import './styles/base.css';
+// 注册 Service Worker，让 PWA 生效
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
 
 installGlobalClientErrorLogging();
 installClientDiagnosticsReporter();
