@@ -1,7 +1,7 @@
 {
   "name": Claude",
   "short_name": "Claude",
-  "description": "你的描述",
+  "description": "一个能和 AI 对话，也会陪你一起长出样子的房间。",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
