@@ -1,4 +1,4 @@
-const CACHE_NAME = 'polaris-v1';
+const CACHE_NAME = 'claude-v1';
 
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (event) => {
